@@ -1,4 +1,4 @@
-name: Docker-build-with-evidence
+name: rod-Docker-build-with-evidence
 
 on:
   [workflow_dispatch]
@@ -11,7 +11,7 @@ jobs:
   Docker-build-with-evidence:
     runs-on: ubuntu-latest
     env:
-      REPO_NAME: evidence-demo-docker-dev
+      REPO_NAME: rod-oci-dev-local
     steps:
 
       - uses: actions/checkout@v4
@@ -19,8 +19,8 @@ jobs:
       - name: Install jfrog cli
         uses: jfrog/setup-jfrog-cli@v4
         env:
-          JF_URL: ${{ vars.ARTIFACTORY_URL }}
-          JF_ACCESS_TOKEN: ${{ secrets.ARTIFACTORY_ACCESS_TOKEN }}
+          JF_URL:  https://solenglatest.jfrog.io
+          JF_ACCESS_TOKEN: eyJ2ZXIiOiIyIiwidHlwIjoiSldUIiwiYWxnIjoiUlMyNTYiLCJraWQiOiIwZ01oUFQ2SWN3SzlFWnZqYkRuTHQ5TmRBejdvbnMzZXNJWFRtU3ZtUGVBIn0.eyJzdWIiOiJqZmFjQDAxajE1YzlyYWFjbWtzMTJkdmdtZHQwc3dhL3VzZXJzL3JvZG9scGhlZiIsInNjcCI6ImFwcGxpZWQtcGVybWlzc2lvbnMvYWRtaW4iLCJhdWQiOiIqQCoiLCJpc3MiOiJqZmZlQDAxajE1YzlyYWFjbWtzMTJkdmdtZHQwc3dhIiwiaWF0IjoxNzM2MjQyMDY4LCJqdGkiOiIzZDU2MjIwZS00NGU5LTQ4NWMtODI2Mi01MDdiYjhmOTQzMTUifQ.mgl-5H_1dgIKp_hw8Nsj9vTehMk37A2CMAR0_UR51VPc9fIJnClZSkwbzVAhp6mjJ1SbamgHyV-8HSV-N0RKNh57VzsbsD9qiTv9BjRXsjC7UidVzENqm8d__G-m_WXQOGAKtjNKOu_YczOavgYXFYf8sPTbbtVO5Ur8EXiP7-sYgC4LtqPZBAVxY4DfWS6OCfC4u592eoYdQpM_g7BE45riRtgV_VOSBceXn2wnq-3LOA_KMS7Y4IxBIRF4LQFqP8hswN_GBXHBd5qdSZjaSBNK1unHDGSwuSHEVHbErvFaFCwBUghjcmh6Fg5_T2b0BBZh_YRqMt22P1jQQJcf8w
 
       - name: Build Docker image
         run: |
@@ -33,7 +33,7 @@ jobs:
         run: |
           echo '{ "actor": "${{ github.actor }}", "date": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'" }' > sign.json
           jf evd create --package-name example-go-app --package-version ${{ github.run_number }} --package-repo-name ${REPO_NAME} \
-          --key "${{ secrets.PRIVATE_KEY }}" --key-alias ${{ secrets.KEY_ALIAS }} \
+          --key "" --key-alias "rod-evd-keys" \
           --predicate ./sign.json --predicate-type https://jfrog.com/evidence/signature/v1 
           echo '🔎 Evidence attached: `signature` 🔏 ' 
 
@@ -57,7 +57,7 @@ jobs:
       - name: Create release bundle
         run: |
           echo '{ "files": [ {"build": "'"${{ github.workflow }}/${{ github.run_number }}"'" } ] }' > bundle-spec.json
-          jf release-bundle-create ${{ github.actor }}-evidence-training ${{ github.run_number }} --signing-key ${{ secrets.RB_KEY }} --spec bundle-spec.json --sync=true
+          jf release-bundle-create ${{ github.actor }}-evidence-training ${{ github.run_number }} --signing-key ${{ evidence-demo-rbv2-key }} --spec bundle-spec.json --sync=true
           VER_LINK=${{ vars.ARTIFACTORY_URL }}'/ui/artifactory/lifecycle/?bundleName='${{ github.actor }}-evidence-training'&bundleToFlash='${{ github.actor }}-evidence-training'&releaseBundleVersion='${{ github.run_number }}'&repositoryKey=release-bundles-v2&activeKanbanTab=promotion'
           echo '📦 Release bundle ['${{ github.actor }}-evidence-training:${{ github.run_number }}']('${VER_LINK}') created' >> $GITHUB_STEP_SUMMARY
 
