@@ -54,4 +54,3 @@ jobs:
             echo "Fail promotion policy check" >> $GITHUB_STEP_SUMMARY
             exit 1
           fi
-          
