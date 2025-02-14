@@ -1,4 +1,4 @@
-name: christophl--Promote-to-qa
+name: rodolphef--Promote-to-qa
 on:
   workflow_dispatch:
     inputs:

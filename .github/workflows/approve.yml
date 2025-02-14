@@ -1,4 +1,4 @@
-name: christophl--Docker-approve-with-evidence
+name: rodolphef--Docker-approve-with-evidence
 
 on:
   workflow_dispatch:
@@ -15,7 +15,7 @@ jobs:
   Docker-build-with-evidence:
     runs-on: ubuntu-latest
     env:
-      REPO_NAME: christophl-docker-dev
+      REPO_NAME: rodolphef-docker-dev
     steps:
       - name: Checkout
         uses: actions/checkout@v4
