@@ -2,3 +2,5 @@ private.pem
 public.pem
 bundle-spec.json
 .gitignore
+scripts/graphql_query3.gql
+evidence_graph.json
